@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
@@ -20,7 +19,7 @@
 
 <body>
   <header>
-    <img src="https://i.imgur.com/4lU0f1w.png" alt="公司 Logo">
+    <img src="https://i.imgur.com/4lU0f1w.png" alt="Logo">
     <h1>花店帳單系統</h1>
   </header>
 
@@ -85,16 +84,18 @@
     allRows.forEach(row => {
       const shop = row[header.indexOf("花店名稱")];
       const date = row[dateIndex];
-      const bill = Number(row[billIndex]);
+
+      const raw = row[billIndex] || "";
+      const bill = Number(raw.replace(/[^0-9.-]/g, ""));
 
       if (shop === targetShop) {
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${date}</td>
-          <td class="amount">${bill.toLocaleString()}</td>
+          <td class="amount">${isNaN(bill) ? "" : bill.toLocaleString()}</td>
         `;
         tbody.appendChild(tr);
-        total += bill;
+        if (!isNaN(bill)) total += bill;
       }
     });
 
@@ -103,6 +104,5 @@
 
   loadSheet();
 </script>
-
 </body>
 </html>
