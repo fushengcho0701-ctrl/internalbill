@@ -2,12 +2,12 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>花店帳單系統</title>
+  <title>花店帳單系統（新版）</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
     header { display: flex; align-items: center; margin-bottom: 20px; }
-    header img { height: 60px; margin-right: 10px; }
-    h1 { font-size: 28px; }
+    header img { height: 60px; margin-right: 12px; }
+    h1 { font-size: 26px; margin: 0; }
     select { font-size: 16px; padding: 6px 10px; margin: 15px 0; }
     table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 16px; }
     th, td { border: 1px solid #ccc; padding: 10px; }
@@ -20,7 +20,7 @@
 <body>
   <header>
     <img src="https://i.imgur.com/4lU0f1w.png" alt="Logo">
-    <h1>花店帳單系統</h1>
+    <h1>花店帳單系統（新版）</h1>
   </header>
 
   <label>選擇花店：</label>
@@ -59,7 +59,6 @@
     const shopSelector = document.getElementById("shopSelector");
 
     const shops = [...new Set(allRows.map(row => row[shopIndex]))];
-
     shops.forEach(shop => {
       const option = document.createElement("option");
       option.value = shop;
@@ -67,14 +66,13 @@
       shopSelector.appendChild(option);
     });
 
-    shopSelector.addEventListener("change", () =>
-      loadTable(shopSelector.value)
-    );
+    shopSelector.addEventListener("change", () => loadTable(shopSelector.value));
   }
 
+  // 強制 Bill 欄位永遠取最後一欄，保證不會讀錯欄位
   function loadTable(targetShop) {
     const dateIndex = header.indexOf("Date");
-    const billIndex = header.indexOf("Bill $");
+    const shopIndex = header.indexOf("花店名稱");
 
     const tbody = document.querySelector("#bill-table tbody");
     tbody.innerHTML = "";
@@ -82,11 +80,11 @@
     let total = 0;
 
     allRows.forEach(row => {
-      const shop = row[header.indexOf("花店名稱")];
+      const shop = row[shopIndex];
       const date = row[dateIndex];
+      const rawBill = row[row.length - 1] || "";
 
-      const raw = row[billIndex] || "";
-      const bill = Number(raw.replace(/[^0-9.-]/g, ""));
+      const bill = Number(rawBill.replace(/[^0-9.-]/g, ""));
 
       if (shop === targetShop) {
         const tr = document.createElement("tr");
@@ -104,5 +102,6 @@
 
   loadSheet();
 </script>
+
 </body>
 </html>
